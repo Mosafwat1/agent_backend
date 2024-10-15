@@ -68,20 +68,20 @@ export class AuthController {
         const { isPageable, size, page, first } = requestData;
 
         const agentRequest = {
-            from: "2023-10-02T10:15:30",
-            to: "2024-11-02T10:15:30",
+            //from: "2023-10-02T10:15:30",
+            //to: "2024-11-02T10:15:30",
             isPageable: isPageable,
             size: size || 4,
             page: page || 0,
-            sort_by: "arabicName",
-            sort_direction: "ASC",
-            signature: "abc123signature"
+           // sort_by: "arabicName",
+            //sort_direction: "ASC",
+            //signature: "abc123signature"
         };
 
         
         const agentResponse = {
             correlationid: "16f42d2a-b64b-4810-838f-00a8aa9ecee",
-            status: "success",
+            status: true,
             message: "We found a matched data",
             reportDetails: {
                 content: [
@@ -96,21 +96,38 @@ export class AuthController {
                 last: true,
                 size: 50,
                 number: 0,
-                sort: { empty: true, sorted: false, unsorted: true },
+                //sort: { empty: true, sorted: false, unsorted: true },
                 numberOfElements: 50,
                 first: true,
-                empty: false
+               // empty: false
             }
         };
 
         
-        const mobileResponse = {
-            status: agentResponse.status,
-            data: {
-                content: agentResponse.reportDetails.content
-            }
-        };
+        if (true)
+            {
 
-        return mobileResponse;
+                const mobileResponse = {
+                    isSuccess: agentResponse.status,
+                    message: "",
+                    data: {
+                        content: agentResponse.reportDetails.content
+                    }
+                };
+                return mobileResponse;
+        }else{
+
+            const mobileResponse = {
+                isSuccess: false,
+                message: "err msg",
+                data:false
+            };
+
+            return mobileResponse;
+        }
+
+
+
+        
     }
 }

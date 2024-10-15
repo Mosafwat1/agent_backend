@@ -2,10 +2,12 @@ import { IsString, IsBoolean, IsNumber, IsOptional } from 'class-validator';
 
 export class EndOfDayReportRequestDto {
     @IsString()
-    from: string;
+    @IsOptional()
+    from?: string;
 
     @IsString()
-    to: string;
+    @IsOptional()
+    to?: string;
 
     @IsBoolean()
     isPageable: boolean;
@@ -17,15 +19,19 @@ export class EndOfDayReportRequestDto {
     page: number;
 
     @IsString()
-    sort_by: string;
+    @IsOptional()
+    sort_by?: string;
 
     @IsString()
-    sort_direction: string;
+    @IsOptional()
+    sort_direction?: string;
 
     @IsString()
-    signature: string;
+    @IsOptional()
+    signature?: string;
 
     @IsBoolean()
-    first: boolean;
+    @IsOptional()
+    first?: boolean;
 
 }
