@@ -57,11 +57,13 @@ build-image-dev:
   #after_script:
    # - docker system prune -af  --filter "until=$((24))h" --filter "label=scope=agent-${CI_COMMIT_REF_NAME}-${APP_NAME}"  
   environment: development  
-  #when: manual
+  when: manual
   rules:
     - if:  '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "dev" '
       exists:
         - Dockerfile
+        
+
 
 deploy-dev:
   stage: deploy
