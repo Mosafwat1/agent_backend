@@ -73,7 +73,8 @@ deploy-dev:
   extends: .template_docker_login  
   before_script:
     # Install SSH and configure SSH Agent
-    - sudo apt-get update && apt-get install -y openssh-client
+    #- sudo apt-get update && apt-get install -y openssh-client
+    - echo "test ubuntu"
   script:
     #- echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - # ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST
     - chmod 400 "gitlab-server.pem"
