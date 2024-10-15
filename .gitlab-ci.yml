@@ -68,14 +68,12 @@ build-image-dev:
 deploy-dev:
   stage: deploy
   image:
-    name: amazon/aws-cli  # Change from Alpine to AWS CLI image
+    name: ubuntu:latest
     entrypoint: [""]
   extends: .template_docker_login  
   before_script:
-    # Install SSH and configure SSH Agent for AWS CLI Image
-    - apt install -y openssh
-    - docker --version
-    - aws --version
+    # Install SSH and configure SSH Agent
+    - apt-get update && apt-get install -y openssh-client
   script:
     #- echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - # ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST
     - ssh -i "gitlab-server.pem" ubuntu@ec2-52-213-54-14.eu-west-1.compute.amazonaws.com "aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin $DOCKER_REGISTRY"
