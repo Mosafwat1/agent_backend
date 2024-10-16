@@ -49,25 +49,13 @@ export class AuthController {
         }
     }
 
-    @Post('resend-otp')
-    @HttpCode(200)
-    resendOtp(@Body() resendData: { mobileNumber: string }): GenericResponseDto<boolean> {
-        const isValidMobileNumber = AuthController.validNumbers.includes(resendData.mobileNumber);
-
-        if (isValidMobileNumber) {
-            return new GenericResponseDto(true, null, isValidMobileNumber);
-        } else {
-            return new GenericResponseDto(false, 'Failed to resend OTP. Invalid mobile number.', isValidMobileNumber);
-        }
-    }
-
     @Post('end-of-day')
     @HttpCode(200)
     endOfDayReport(
-        @Body() requestData: EndOfDayReportRequestDto,  // Use DTO here
+        @Body() requestData: EndOfDayReportRequestDto,  
         @Headers('authorization') authHeader: string
     ): any {
-        // Extract the Bearer token
+        
         const token = authHeader?.split(' ')[1];
         if (!token || !AuthController.validTokens.includes(token)) {
             return {
@@ -76,17 +64,53 @@ export class AuthController {
             };
         }
 
-        // Simulate a mock response for the report
-        const reportContent = [
-            { mobileNumber: null, natIDNumber: null, fullName: null, created: '2024-10-09T01:02:24.363688' },
-            { mobileNumber: '+201151535535', natIDNumber: '29310101301476', fullName: 'محمد صبرى راشد', created: '2024-10-09T01:02:24.363688' },
-            { mobileNumber: '+201157887337', natIDNumber: '28804133100196', fullName: 'ايهاب محمد علي', created: '2024-10-09T01:02:24.363688' },
-            { mobileNumber: null, natIDNumber: null, fullName: 'محمد على مرسى', created: '2024-10-09T01:02:24.363688' }
-        ];
+        
+        const { isPageable, size, page, first } = requestData;
 
-        return {
-            status: 'success',
-            data: { content: reportContent }
+        const agentRequest = {
+            from: "2023-10-02T10:15:30",
+            to: "2024-11-02T10:15:30",
+            isPageable: isPageable,
+            size: size || 4,
+            page: page || 0,
+            sort_by: "arabicName",
+            sort_direction: "ASC",
+            signature: "abc123signature"
         };
+
+        
+        const agentResponse = {
+            correlationid: "16f42d2a-b64b-4810-838f-00a8aa9ecee",
+            status: "success",
+            message: "We found a matched data",
+            reportDetails: {
+                content: [
+                    { mobileNumber: null, natIDNumber: null, fullName: null, created: "2024-10-09T01:02:24.363688" },
+                    { mobileNumber: "+201151535535", natIDNumber: "29310101301476", fullName: "محمد صبرى راشد", created: "2024-10-09T01:02:24.363688" },
+                    { mobileNumber: "+201157887337", natIDNumber: "28804133100196", fullName: "ايهاب محمد علي", created: "2024-10-09T01:02:24.363688" },
+                    { mobileNumber: null, natIDNumber: null, fullName: "محمد على مرسى", created: "2024-10-09T01:02:24.363688" }
+                ],
+                pageable: "INSTANCE",
+                totalPages: 1,
+                totalElements: 50,
+                last: true,
+                size: 50,
+                number: 0,
+                sort: { empty: true, sorted: false, unsorted: true },
+                numberOfElements: 50,
+                first: true,
+                empty: false
+            }
+        };
+
+        
+        const mobileResponse = {
+            status: agentResponse.status,
+            data: {
+                content: agentResponse.reportDetails.content
+            }
+        };
+
+        return mobileResponse;
     }
 }

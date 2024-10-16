@@ -24,4 +24,8 @@ export class EndOfDayReportRequestDto {
 
     @IsString()
     signature: string;
+
+    @IsBoolean()
+    first: boolean;
+
 }
