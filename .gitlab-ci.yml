@@ -64,7 +64,6 @@ build-image-dev:
         - Dockerfile
 
 
-
 deploy-dev:
   stage: deploy
   image:
