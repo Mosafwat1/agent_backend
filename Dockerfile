@@ -13,6 +13,7 @@ RUN npm install
 # Step 5: Copy the rest of the application code to the container
 COPY . .
 
+
 # Step 6: Build the application (e.g., for a TypeScript or Next.js project)
 RUN npm run build
 
