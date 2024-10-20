@@ -78,13 +78,13 @@ deploy-dev:
   script:
     #- echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - # ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST
     - chmod 400 "gitlab-server.pem"
-    - ssh -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-52-213-54-14.eu-west-1.compute.amazonaws.com "aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin $DOCKER_REGISTRY"
+    - ssh -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-34-242-133-82.eu-west-1.compute.amazonaws.com "aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin $DOCKER_REGISTRY"
     # Stop the old container
-    - ssh  -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-52-213-54-14.eu-west-1.compute.amazonaws.com "docker stop ${APP_NAME}_container || true && docker rm ${APP_NAME}_container || true"
+    - ssh  -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-34-242-133-82.eu-west-1.compute.amazonaws.com "docker stop ${APP_NAME}_container || true && docker rm ${APP_NAME}_container || true"
     # Pull the new image
-    - ssh -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-52-213-54-14.eu-west-1.compute.amazonaws.com "docker pull $DOCKER_REGISTRY/$APP_NAME:${CI_PIPELINE_IID}"
+    - ssh -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-34-242-133-82.eu-west-1.compute.amazonaws.com "docker pull $DOCKER_REGISTRY/$APP_NAME:${CI_PIPELINE_IID}"
     # Run the new container
-    - ssh -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-52-213-54-14.eu-west-1.compute.amazonaws.com "docker run -d --name ${APP_NAME}_container -p 80:3000 $DOCKER_REGISTRY/$APP_NAME:${CI_PIPELINE_IID}"
+    - ssh -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-34-242-133-82.eu-west-1.compute.amazonaws.com "docker run -d --name ${APP_NAME}_container -p 80:3000 $DOCKER_REGISTRY/$APP_NAME:${CI_PIPELINE_IID}"
     # Cleanup old containers/images
     #- ssh $EC2_USER@$EC2_HOST "docker system prune -af"
   environment: development
