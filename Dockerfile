@@ -1,24 +1,46 @@
-# Step 1: Use an official Node.js image as the base image
-FROM node:18-alpine
+FROM node:18
 
-# Step 2: Set the working directory in the container
+# Install dependencies required for running Chromium in headless mode
+RUN apt-get update && apt-get install -y \
+    wget \
+    ca-certificates \
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgdk-pixbuf2.0-0 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    xdg-utils \
+    libgbm1 \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create work directory
 WORKDIR /usr/src/app
 
-# Step 3: Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# Copy app source to work directory
+COPY . /usr/src/app
 
-# Step 4: Install dependencies
-RUN npm install
+# Install app dependencies
+RUN yarn install
 
-# Step 5: Copy the rest of the application code to the container
-COPY . .
+# Build the application
+RUN yarn build
 
+# Copy templates explicitly
+RUN mv src/api/templates/ /usr/src/app/dist/api/
 
-# Step 6: Build the application (e.g., for a TypeScript or Next.js project)
-RUN npm run build
-
-# Step 7: Expose the port the app runs on
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Step 8: Run the production command
-CMD ["npm", "run", "start:prod"]
+# Run the app
+CMD ["npm", "run", "start"]
