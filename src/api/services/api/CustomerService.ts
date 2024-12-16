@@ -54,8 +54,8 @@ export class CustomerService {
                         docs: {
                             KYCForm: kyc,
                         },
-                        signature: env.providers.utp.signature,
                     },
+                    signature: env.providers.utp.signature,
                 },
                 headers: {
                     Authorization: token,
