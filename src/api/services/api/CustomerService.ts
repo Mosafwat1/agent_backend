@@ -52,9 +52,7 @@ export class CustomerService {
                     request : {
                         businessId,
                         docs: {
-                            docs: {
-                                KYCForm: kyc,
-                            },
+                            KYCForm: kyc,
                         },
                         signature: env.providers.utp.signature,
                     },
