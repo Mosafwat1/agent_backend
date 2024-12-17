@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { ExpressErrorMiddlewareInterface, HttpError, Middleware } from 'routing-controllers';
+import { ExpressErrorMiddlewareInterface, Middleware } from 'routing-controllers';
 
 import { Logger, LoggerInterface } from '../../decorators/Logger';
 import { env } from '../../env';
@@ -13,11 +13,12 @@ export class ErrorHandlerMiddleware implements ExpressErrorMiddlewareInterface {
         @Logger(__filename) private log: LoggerInterface
     ) { }
 
-    public error(error: HttpError, req: express.Request, res: express.Response, next: express.NextFunction): void {
-        res.status(error.httpCode || 500);
+    public error(error: any, req: express.Request, res: express.Response, next: express.NextFunction): void {
+        res.status(error.statusCode || +error?.response?.status || 500);
         res.json({
-            name: error.name,
-            message: error.message,
+            isSuccess: false,
+            message: error?.response?.data?.message,
+            data: undefined,
             errors: error[`errors`] || [],
         });
 

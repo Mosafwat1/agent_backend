@@ -29,8 +29,7 @@ export class HttpsClient {
             const res = await this.client.request(config);
             return res;
         } catch (err: any) {
-            console.log(err);
-            throw new Error(err?.message || 'Error With sending an HTTP');
+            throw err;
         }
     }
 
