@@ -6,6 +6,7 @@ import { ValidateService } from '../../../services/validation/ValidateService';
 import { PdfService } from '../../../services/helpers/PdfService';
 import { EODReportRequest } from './requests/ReportRequests';
 import { CustomerAuthorizationMiddleware } from '../../../middlewares/CustomerAuthorizationMiddleware';
+import { EODReportResponse, EODReportPrintResponse } from './responses/ReportResponses';
 
 @JsonController('/api/reports')
 @OpenAPI({ security: [{ basicAuth: [] }] })
@@ -19,22 +20,19 @@ export class ReportController {
 
     @Post('/end-of-day')
     @UseBefore(CustomerAuthorizationMiddleware)
-    public async EODReport(@HeaderParam('Authorization') token: string, @Body() body: EODReportRequest): Promise<any> {
+    public async EODReport(@HeaderParam('Authorization') token: string, @Body() body: EODReportRequest): Promise<EODReportResponse> {
         await this.validator.validateBody(body);
-        return this.reportService.EODReport(token, body);
+        const data = await this.reportService.EODReport(token, body);
+        return new EODReportResponse(data);
     }
 
     @Get('/print-end-of-day')
     @UseBefore(CustomerAuthorizationMiddleware)
-    public async EODReportPrint(@HeaderParam('Authorization') token: string): Promise<any> {
+    public async EODReportPrint(@HeaderParam('Authorization') token: string): Promise<EODReportPrintResponse> {
         const reportData = await this.reportService.retrieveReport(token);
         const templatePath = path.join(__dirname, '..', '..', '..', 'templates', 'eodReport.hbs');
         const encodedPdf = await this.pdfService.encodedPdf(templatePath, reportData);
-        return {
-            isSuccess: true,
-            message: 'Report generated successfully',
-            data: encodedPdf,
-        };
+        return new EODReportPrintResponse(encodedPdf);
     }
 
 }

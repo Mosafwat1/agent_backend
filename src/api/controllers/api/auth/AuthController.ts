@@ -19,10 +19,7 @@ export class AuthController {
     public async login(@Body() body: LoginAgent): Promise<LoginResponse> {
         await this.validator.validateBody(body);
         await this.agentService.requestOtp(body.mobileNumber, false);
-        return {
-            isSuccess: true,
-            message: 'OTP has been sent successfully to your mobile number',
-        };
+        return new LoginResponse();
     }
 
     @Post('/otp/verify')
@@ -33,13 +30,13 @@ export class AuthController {
         const agentDetails = verifyRes.agentDetails;
         const assignedBranch = agentDetails.assignedBranch;
 
-        return {
-            token: verifyRes.accessToken,
-            fullName: agentDetails.agentName,
-            branchName: assignedBranch.branchName,
-            branchAddress: assignedBranch.branchAddress,
-            branchLat: assignedBranch.branchLat,
-            branchLong: assignedBranch.branchLong,
-        };
+        return new VerifyOtpResponse(
+            verifyRes.accessToken,
+            agentDetails.agentName,
+            assignedBranch.branchName,
+            assignedBranch.branchAddress,
+            assignedBranch.branchLat,
+            assignedBranch.branchLong
+        );
     }
 }

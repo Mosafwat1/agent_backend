@@ -8,7 +8,7 @@ export class UpdateUserDataRequest {
     @IsString()
     @IsOptional()
     public eName: string;
-
+ 
     @IsString()
     @IsOptional()
     public workAddress?: string;
@@ -23,9 +23,25 @@ export class UpdateUserDataRequest {
 
     @IsString()
     public userToken: string;
+
+    @IsString()
+    @IsOptional()
+    public firstNameAr?: string;
+
+    @IsString()
+    @IsOptional()
+    public lastNameAr?: string;
+
+    @IsString()
+    @IsOptional()
+    public firstNameEn?: string;
+
+    @IsString()
+    @IsOptional()
+    public lastNameEn?: string;
 }
 
-export class UploadNationalIdRequest {
+export class UploadNatIdRequest {
 
     @IsString()
     public businessId: string;
@@ -35,12 +51,8 @@ export class UploadNationalIdRequest {
 
     @IsString()
     public natBack: string;
-}
 
-export class UserDataRequest {
-    @IsString()
-    @IsNotEmpty()
-    public mobileNumber: string;
+
 }
 
 export class ReUploadNatIdRequest {
@@ -49,10 +61,12 @@ export class ReUploadNatIdRequest {
     public userToken: string;
 
     @IsString()
-    public nidFront: string;
+    public  nidFront: string;
 
     @IsString()
     public nidBack: string;
+
+
 }
 
 export class RegisterUserRequest {
@@ -95,4 +109,20 @@ export class RegisterUserRequest {
     @IsString()
     @IsOptional()
     public lastNameEn?: string;
+}
+
+export class UserDataRequest {
+    @IsString()
+    @IsNotEmpty()
+    public mobileNumber: string;
+}
+
+export class customerProfile {
+    @IsString()
+    @IsNotEmpty()
+    public refrence: string;
+
+    @IsString()
+    @IsNotEmpty()
+    public type: "MOBILE"
 }

@@ -6,8 +6,9 @@ import { IProvider } from '../../wrappers/providers/IProvider';
 import { ProviderFactory } from '../../wrappers/providers/handler/ProviderFactory';
 import { HttpError } from 'routing-controllers';
 import {
-    UpdateUserDataRequest,
-    UploadNationalIdRequest,
+   // UpdateUserDataRequest,
+   // UploadNationalIdRequest,
+    //UserDataRequest,
     RegisterUserRequest,
 } from '../../controllers/api/customer/requests/UserRequests';
 
@@ -23,6 +24,24 @@ export class CustomerService {
             throw new Error('no providers are available');
         }
         this.provider = providerFactory.getInstance('utp');
+    }
+
+
+    public async registerUser(token: string, request: RegisterUserRequest): Promise<any> {
+        try {
+            return this.provider.dispatch('register-user', {
+               payload: {
+                request,
+                signature: env.providers.utp.signature,
+            },
+            headers: {
+                Authorization: token,
+            },
+        });
+    } catch (error) {
+        this.log.error('Failed to fetch kyc doc', { error});
+        throw new HttpError(400, 'Failed to fetch kyc doc');
+    }
     }
 
     public async customerProfile(token: string, reference: string, type: string = 'MOBILE'): Promise<any> {
@@ -45,52 +64,66 @@ export class CustomerService {
         }
     }
 
-    public async saveKyc(token: string, businessId: string, kyc: string): Promise<any> {
+    public async kycDoc(token: string, reference: string, type: string = 'MOBILE'): Promise<any> {
         try {
-             return this.provider.dispatch('customer-upload', {
+             return this.provider.dispatch('customer-profile', {
                 payload: {
                     request : {
-                        businessId,
-                        docs: {
-                            KYCForm: kyc,
-                        },
+                        reference,
+                        type,
                     },
                     signature: env.providers.utp.signature,
                 },
                 headers: {
                     Authorization: token,
                 },
-            });
+             });
         } catch (error) {
             this.log.error('Failed to fetch kyc doc', { error});
             throw new HttpError(400, 'Failed to fetch kyc doc');
         }
     }
 
-    public async registerUser(token: string, request: RegisterUserRequest): Promise<any> {
-        return this.provider.dispatch('register-user', {
-            payload: {
-                request,
-                signature: env.providers.utp.signature,
-            },
-            headers: {
-                Authorization: token,
-            },
-        });
+    public async saveKyc(token: string, businessId: string, kyc: string): Promise<any> {
+        try {
+             return this.provider.dispatch('upload-kyc', {
+                payload: {
+                    request : {
+                        businessId,
+                        kyc,
+                    },
+                    signature: env.providers.utp.signature,
+                },
+                headers: {
+                    Authorization: token,
+                },
+             });
+        } catch (error) {
+            this.log.error('Failed to fetch kyc doc', { error});
+            throw new HttpError(400, 'Failed to fetch kyc doc');
+        }
     }
 
-    public async updateProfileData(token: string, data: UpdateUserDataRequest): Promise<any> {
+    public async updateProfileData(
+        token: string,
+        userToken: string,
+        aName: string,
+        eName: string,
+        workAddress?: string,
+        workOccupation?: string,
+        nidAddress?: string
+    ): Promise<any> {
         try {
             return this.provider.dispatch('update-user-profile', {
                 payload: {
                     request: {
-                        businessId: data.userToken,
-                        fullName: data.aName,
-                        firstName: '',
-                        englishFullName: data.eName,
-                        workAddress: data.workAddress || '',
-                        workOccupation: data.workOccupation || '',
-                        natIDAddress: data.nidAddress || '',
+                        businessId: userToken,
+                        fullName: aName,
+                        firstName: "",
+                        englishFullName: eName,
+                        workAddress: workAddress || "",
+                        workOccupation: workOccupation || "",
+                        natIDAddress: nidAddress || "",
                     },
                     signature: env.providers.utp.signature,
                 },
@@ -104,18 +137,24 @@ export class CustomerService {
         }
     }
 
-    public async saveNatIdToMiniIO(token: string, data: UploadNationalIdRequest): Promise<any> {
+
+    public async saveNatIdToMiniIO(
+        natFrontBase64: string,
+        natBackBase64: string,
+        businessId: string,
+        token: string
+    ): Promise<any>{
         try {
-            return this.provider.dispatch('customer-upload', {
+            return this.provider.dispatch('upload-customer-documents', {
                 payload: {
                     request: {
-                        businessId: data?.businessId,
+                        businessId,
                         docs: {
-                            NatFront: data.natFront,
-                            NatBack: data.natBack,
+                            NatFront: natFrontBase64,
+                            NatBack: natBackBase64,
                         },
                     },
-                    signature: env.providers.utp.signature,
+                    signature: "abc123signature",
                 },
                 headers: {
                     Authorization: token,
@@ -126,4 +165,6 @@ export class CustomerService {
             throw new HttpError(400, 'Failed to upload national ID documents');
         }
     }
+    
+    
 }
