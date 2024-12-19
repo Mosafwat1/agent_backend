@@ -45,5 +45,9 @@ export default {
             path: '/secure/agent/api/reports/end-of-day',
             method: 'POST',
         }],
+        ['upload-customer-documents', {
+            path: '/secure/agent/api/customer/documents',
+            method: 'POST',
+        }],
     ]),
 };

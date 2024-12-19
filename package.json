@@ -55,7 +55,7 @@
     "mysql2": "^2.3.0",
     "nodemon": "^1.12.1",
     "nps": "^5.9.3",
-    "nps-utils": "^1.5.0",
+    "nps-utils": "^1.7.0",
     "pg": "^7.4.3",
     "puppeteer": "^23.10.4",
     "reflect-metadata": "^0.2.2",
