@@ -61,19 +61,19 @@ export class CustomerService {
             const customerProfile = profileResponse.customerProfile;
             customerProfile.isTopUp = false;
             const idNumber = customerProfile.natIDNumber;
-    
+
             if (!customerProfile.gender) {
                 customerProfile.gender = parseGender(idNumber);
             }
-    
+
             if (!customerProfile.birthdate) {
                 customerProfile.birthdate = parseBirthDate(idNumber);
             }
-    
+
             if (!customerProfile.placeOfBirth) {
                 customerProfile.placeOfBirth = parsePlaceOfBirth(idNumber);
             }
-    
+
             return profileResponse;
         } catch (error) {
             this.log.error('Failed to fetch customer profile', { error });
