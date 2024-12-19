@@ -5,6 +5,7 @@ import { Logger, LoggerInterface } from '../../../decorators/Logger';
 import { IProvider } from '../../wrappers/providers/IProvider';
 import { ProviderFactory } from '../../wrappers/providers/handler/ProviderFactory';
 import { HttpError } from 'routing-controllers';
+import { parseGender, parsePlaceOfBirth, parseBirthDate } from '../../services/helpers/IdInfo';
 import {
    // UpdateUserDataRequest,
    // UploadNationalIdRequest,
@@ -46,9 +47,9 @@ export class CustomerService {
 
     public async customerProfile(token: string, reference: string, type: string = 'MOBILE'): Promise<any> {
         try {
-             return this.provider.dispatch('customer-profile', {
+            const profileResponse = await this.provider.dispatch('customer-profile', {
                 payload: {
-                    request : {
+                    request: {
                         reference,
                         type,
                     },
@@ -57,10 +58,28 @@ export class CustomerService {
                 headers: {
                     Authorization: token,
                 },
-             });
+            });
+
+            const customerProfile = profileResponse.customerProfile;
+            customerProfile.isTopUp = false;
+            const idNumber = customerProfile.natIDNumber;
+    
+            if (!customerProfile.gender) {
+                customerProfile.gender = parseGender(idNumber);
+            }
+    
+            if (!customerProfile.birthdate) {
+                customerProfile.birthdate = parseBirthDate(idNumber);
+            }
+    
+            if (!customerProfile.placeOfBirth) {
+                customerProfile.placeOfBirth = parsePlaceOfBirth(idNumber);
+            }
+    
+            return profileResponse;
         } catch (error) {
-            this.log.error('Failed to fetch kyc doc', { error});
-            throw new HttpError(400, 'Failed to fetch kyc doc');
+            this.log.error('Failed to fetch customer profile', { error });
+            throw new HttpError(400, 'Failed to fetch customer profile');
         }
     }
 
