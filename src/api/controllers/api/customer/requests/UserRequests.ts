@@ -8,7 +8,7 @@ export class UpdateUserDataRequest {
     @IsString()
     @IsOptional()
     public eName: string;
- 
+
     @IsString()
     @IsOptional()
     public workAddress?: string;
@@ -51,8 +51,6 @@ export class UploadNatIdRequest {
 
     @IsString()
     public natBack: string;
-
-
 }
 
 export class ReUploadNatIdRequest {
@@ -65,8 +63,6 @@ export class ReUploadNatIdRequest {
 
     @IsString()
     public nidBack: string;
-
-
 }
 
 export class RegisterUserRequest {
@@ -124,5 +120,5 @@ export class CustomerProfile {
 
     @IsString()
     @IsNotEmpty()
-    public type: "MOBILE"
+    public type: 'MOBILE';
 }

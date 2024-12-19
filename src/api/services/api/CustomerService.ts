@@ -9,7 +9,7 @@ import { parseGender, parsePlaceOfBirth, parseBirthDate } from '../../services/h
 import {
    // UpdateUserDataRequest,
    // UploadNationalIdRequest,
-    //UserDataRequest,
+   // UserDataRequest,
     RegisterUserRequest,
 } from '../../controllers/api/customer/requests/UserRequests';
 
@@ -27,7 +27,6 @@ export class CustomerService {
         this.provider = providerFactory.getInstance('utp');
     }
 
-
     public async registerUser(token: string, request: RegisterUserRequest): Promise<any> {
         try {
             return this.provider.dispatch('register-user', {
@@ -37,12 +36,11 @@ export class CustomerService {
             },
             headers: {
                 Authorization: token,
-            },
-        });
-    } catch (error) {
-        this.log.error('Failed to fetch kyc doc', { error});
-        throw new HttpError(400, 'Failed to fetch kyc doc');
-    }
+            }});
+        } catch (error) {
+            this.log.error('Failed to fetch kyc doc', { error});
+            throw new HttpError(400, 'Failed to fetch kyc doc');
+        }
     }
 
     public async customerProfile(token: string, reference: string, type: string = 'MOBILE'): Promise<any> {
@@ -138,11 +136,11 @@ export class CustomerService {
                     request: {
                         businessId: userToken,
                         fullName: aName,
-                        firstName: "",
+                        firstName: '',
                         englishFullName: eName,
-                        workAddress: workAddress || "",
-                        workOccupation: workOccupation || "",
-                        natIDAddress: nidAddress || "",
+                        workAddress: workAddress || '',
+                        workOccupation: workOccupation || '',
+                        natIDAddress: nidAddress || '',
                     },
                     signature: env.providers.utp.signature,
                 },
@@ -156,13 +154,12 @@ export class CustomerService {
         }
     }
 
-
     public async saveNatIdToMiniIO(
         natFrontBase64: string,
         natBackBase64: string,
         businessId: string,
         token: string
-    ): Promise<any>{
+    ): Promise<any> {
         try {
             return this.provider.dispatch('upload-customer-documents', {
                 payload: {
@@ -173,7 +170,7 @@ export class CustomerService {
                             NatBack: natBackBase64,
                         },
                     },
-                    signature: "abc123signature",
+                    signature: 'abc123signature',
                 },
                 headers: {
                     Authorization: token,
@@ -184,6 +181,5 @@ export class CustomerService {
             throw new HttpError(400, 'Failed to upload national ID documents');
         }
     }
-    
-    
+
 }

@@ -1,12 +1,14 @@
 import { JsonController, Body, Post, HeaderParam, UseBefore } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
+import * as path from 'path';
 import { CustomerService } from '../../../services/api/CustomerService';
 import { ValidateService } from '../../../services/validation/ValidateService';
 import { KycDocRequest, SaveKycDocRequest } from './requests/KycRequests';
-import { UpdateUserDataRequest, UploadNatIdRequest, ReUploadNatIdRequest,RegisterUserRequest,UserDataRequest, } from './requests/UserRequests';
+import { PdfService } from '../../../services/helpers/PdfService';
+import { UpdateUserDataRequest, UploadNatIdRequest, ReUploadNatIdRequest, RegisterUserRequest, UserDataRequest } from './requests/UserRequests';
 import { CustomerAuthorizationMiddleware } from '../../../middlewares/CustomerAuthorizationMiddleware';
-import { KycResponse,SaveKycResponse } from './responses/KycResponses';
-import { UpdateUserDataResponse,RegisterResponse,UserDataResponse} from './responses/UserResponses';
+import { KycResponse, SaveKycResponse } from './responses/KycResponses';
+import { UpdateUserDataResponse, RegisterResponse, UserDataResponse} from './responses/UserResponses';
 import { GenericResponseDto } from '../responses/SuccessMsgResponse';
 
 @JsonController('/api/user')
@@ -15,9 +17,9 @@ export class CustomerController {
 
     constructor(
         private customerService: CustomerService,
+        private pdfService: PdfService,
         private validator: ValidateService
     ) { }
-
 
     @Post('/register')
     @UseBefore(CustomerAuthorizationMiddleware)
@@ -40,8 +42,12 @@ export class CustomerController {
     @UseBefore(CustomerAuthorizationMiddleware)
     public async kycDoc(@HeaderParam('Authorization') token: string, @Body() body: KycDocRequest): Promise<KycResponse> {
         await this.validator.validateBody(body);
-        const data = await this.customerService.kycDoc(token, body.userToken);
-        return new KycResponse(data);
+        const customer = await this.customerService.kycDoc(token, body.userToken);
+        const profile = customer?.customerProfile;
+        profile.natIDNumbers = profile?.natIDNumber?.split('').reverse();
+        const templatePath = path.join(__dirname, '..', '..', '..', 'templates', 'kycReport.hbs');
+        const encodedPdf = await this.pdfService.encodedPdf(templatePath, profile);
+        return new KycResponse(encodedPdf);
     }
 
     @Post('/save-kyc')
@@ -51,7 +57,6 @@ export class CustomerController {
         const data = await this.customerService.saveKyc(token, body.businessId, body.kyc);
         return new SaveKycResponse(data);
     }
-
 
     @Post('/update-user-data')
     @UseBefore(CustomerAuthorizationMiddleware)
@@ -88,7 +93,6 @@ export class CustomerController {
         );
         return new GenericResponseDto(true, 'National ID uploaded successfully', data);
     }
-
 
     @Post('/reupload-nid')
     @UseBefore(
