@@ -117,7 +117,7 @@ export class UserDataRequest {
     public mobileNumber: string;
 }
 
-export class customerProfile {
+export class CustomerProfile {
     @IsString()
     @IsNotEmpty()
     public refrence: string;
