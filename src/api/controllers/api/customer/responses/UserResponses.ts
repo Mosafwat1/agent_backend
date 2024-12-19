@@ -2,29 +2,28 @@ import { GenericResponseDto } from '../../responses/SuccessMsgResponse';
 
 export class UpdateUserDataResponse extends GenericResponseDto<any> {
     constructor() {
-        super(true, 'User data updated successfully',true);
+        super(true, 'User data updated successfully', true);
     }
 }
 
 export class RegisterResponse extends GenericResponseDto<any> {
     constructor() {
-        super(true, 'User data register successfully',true);
+        super(true, 'User data register successfully', true);
     }
 }
 
 export class UploadNatId extends GenericResponseDto<any> {
     constructor() {
-        super(true, 'User national id uploaded successfully',true);
+        super(true, 'User national id uploaded successfully', true);
     }
 }
-
-
 
 export class GetUserData extends GenericResponseDto<any> {
     constructor() {
-        super(true, 'User data register successfully',true);
+        super(true, 'User data register successfully', true);
     }
 }
+
 export interface OcrNidData {
     arabicName: string;
     englishName: string;

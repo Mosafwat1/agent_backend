@@ -1,7 +1,7 @@
 import { GenericResponseDto } from '../../responses/SuccessMsgResponse';
 
 export class LoginResponse extends GenericResponseDto<any> {
-    constructor() {super(true, 'OTP has been sent successfully to your mobile number',true); }
+    constructor() {super(true, 'OTP has been sent successfully to your mobile number', true); }
 }
 
 export class VerifyOtpResponse extends GenericResponseDto<{
@@ -30,4 +30,3 @@ export class VerifyOtpResponse extends GenericResponseDto<{
         });
     }
 }
-
