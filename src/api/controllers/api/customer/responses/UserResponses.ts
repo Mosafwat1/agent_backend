@@ -37,11 +37,16 @@ export interface OcrNidData {
     placeOfBirth: string;
     phoneNumber: string;
     status: string;
-  }
+}
+
 export interface UserDataResponse {
     ocrNidData: OcrNidData;
     isTopup: boolean;
     nidFrontUrl: string;
     nidBackUrl: string;
     userToken: string;
-  }
+}
+
+export interface UserBusinessId {
+    businessId: string;
+}

@@ -5,11 +5,19 @@ import { CustomerService } from '../../../services/api/CustomerService';
 import { ValidateService } from '../../../services/validation/ValidateService';
 import { KycDocRequest, SaveKycDocRequest } from './requests/KycRequests';
 import { PdfService } from '../../../services/helpers/PdfService';
-import { UpdateUserDataRequest, UploadNatIdRequest, ReUploadNatIdRequest, RegisterUserRequest, UserDataRequest } from './requests/UserRequests';
+import {
+    UpdateUserDataRequest,
+    UploadNatIdRequest,
+    ReUploadNatIdRequest,
+    RegisterUserRequest,
+    UserDataRequest,
+    UserBusinessIdRequest,
+} from './requests/UserRequests';
 import { CustomerAuthorizationMiddleware } from '../../../middlewares/CustomerAuthorizationMiddleware';
 import { KycResponse, SaveKycResponse } from './responses/KycResponses';
 import { UpdateUserDataResponse, RegisterResponse, UserDataResponse} from './responses/UserResponses';
 import { GenericResponseDto } from '../responses/SuccessMsgResponse';
+import { UserService } from '../../../services/api/UserService';
 
 @JsonController('/api/user')
 @OpenAPI({ security: [{ basicAuth: [] }] })
@@ -17,6 +25,7 @@ export class CustomerController {
 
     constructor(
         private customerService: CustomerService,
+        private userServices: UserService,
         private pdfService: PdfService,
         private validator: ValidateService
     ) { }
@@ -110,5 +119,12 @@ export class CustomerController {
             body.userToken
         );
         return new GenericResponseDto(true, 'National ID re-uploaded successfully', data);
+    }
+
+    @Post('/get-business-id')
+    public async geteUserBusinessId(@Body() body: UserBusinessIdRequest): Promise<GenericResponseDto<any>> {
+        await this.validator.validateBody(body);
+        const businessId = await this.userServices.fetchBusinessId(body.mobileNumber);
+        return new GenericResponseDto(true, 'User business id fetched successfully', { businessId });
     }
 }

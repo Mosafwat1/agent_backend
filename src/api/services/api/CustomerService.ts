@@ -6,12 +6,7 @@ import { IProvider } from '../../wrappers/providers/IProvider';
 import { ProviderFactory } from '../../wrappers/providers/handler/ProviderFactory';
 import { HttpError } from 'routing-controllers';
 import { parseGender, parsePlaceOfBirth, parseBirthDate } from '../../services/helpers/IdInfo';
-import {
-   // UpdateUserDataRequest,
-   // UploadNationalIdRequest,
-   // UserDataRequest,
-    RegisterUserRequest,
-} from '../../controllers/api/customer/requests/UserRequests';
+import { RegisterUserRequest } from '../../controllers/api/customer/requests/UserRequests';
 
 @Service()
 export class CustomerService {

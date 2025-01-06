@@ -56,6 +56,7 @@ export const env = {
         database: getOsEnv('TYPEORM_DATABASE'),
         synchronize: toBool(getOsEnvOptional('TYPEORM_SYNCHRONIZE')),
         logging: getOsEnv('TYPEORM_LOGGING'),
+        url: getOsEnv('TYPEORM_URL'),
     },
     swagger: {
         enabled: toBool(getOsEnv('SWAGGER_ENABLED')),

@@ -122,3 +122,9 @@ export class CustomerProfile {
     @IsNotEmpty()
     public type: 'MOBILE';
 }
+
+export class UserBusinessIdRequest {
+    @IsString()
+    @IsNotEmpty()
+    public mobileNumber: string;
+}

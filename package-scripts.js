@@ -133,7 +133,7 @@ module.exports = {
                 script: series(
                     'nps banner.migrate',
                     'nps config',
-                    runFast('./node_modules/typeorm/cli.js migration:run')
+                    runFast('./node_modules/typeorm/cli.js migration:run -d ./data-source.ts'),
                 ),
                 description: 'Migrates the database to newest version available'
             },
