@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:slim
 
 # Install dependencies required for running Chromium in headless mode
 RUN apt-get update && apt-get install -y \
@@ -34,13 +34,13 @@ COPY . /usr/src/app
 RUN yarn install
 
 # Build the application
-RUN yarn build
+# RUN yarn build
 
 # Copy templates explicitly
-RUN mv src/api/templates/ /usr/src/app/dist/api/
+# RUN mv src/api/templates/ /usr/src/app/dist/api/
 
 # Expose the port the app runs on
 EXPOSE 3000
 
 # Run the app
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start", "serve"]
