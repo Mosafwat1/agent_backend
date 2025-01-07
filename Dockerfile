@@ -1,4 +1,4 @@
-FROM node:slim
+FROM node:18
 
 # Install dependencies required for running Chromium in headless mode
 RUN apt-get update && apt-get install -y \
