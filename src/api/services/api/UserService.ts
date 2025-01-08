@@ -14,10 +14,10 @@ export class UserService {
         this.userRepository = AppDataSource.getRepository(User);
     }
 
-    public async fetchBusinessId(mobileNumber: string): Promise<string> {
+    public async getUserByMobileNumber(mobileNumber: string): Promise<User> {
         try {
             const user = await this.userRepository.findOne({ where: { phoneNumber: mobileNumber} });
-            return user.referenceId;
+            return user;
         } catch (error) {
             this.log.error('Failed to fetch business id', { error});
             throw new HttpError(400, 'Failed to fetch business id');

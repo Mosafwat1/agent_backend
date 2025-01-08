@@ -98,11 +98,11 @@ export class CustomerService {
 
     public async saveKyc(token: string, businessId: string, kyc: string): Promise<any> {
         try {
-             return this.provider.dispatch('upload-kyc', {
+             return this.provider.dispatch('customer-upload', {
                 payload: {
                     request : {
                         businessId,
-                        kyc,
+                        docs: { KYCForm: kyc },
                     },
                     signature: env.providers.utp.signature,
                 },
@@ -156,7 +156,7 @@ export class CustomerService {
         token: string
     ): Promise<any> {
         try {
-            return this.provider.dispatch('upload-customer-documents', {
+            return this.provider.dispatch('customer-upload', {
                 payload: {
                     request: {
                         businessId,

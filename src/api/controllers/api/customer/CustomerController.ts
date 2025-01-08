@@ -15,7 +15,7 @@ import {
 } from './requests/UserRequests';
 import { CustomerAuthorizationMiddleware } from '../../../middlewares/CustomerAuthorizationMiddleware';
 import { KycResponse, SaveKycResponse } from './responses/KycResponses';
-import { UpdateUserDataResponse, RegisterResponse, UserDataResponse} from './responses/UserResponses';
+import { UpdateUserDataResponse } from './responses/UserResponses';
 import { GenericResponseDto } from '../responses/SuccessMsgResponse';
 import { UserService } from '../../../services/api/UserService';
 
@@ -32,18 +32,51 @@ export class CustomerController {
 
     @Post('/register')
     @UseBefore(CustomerAuthorizationMiddleware)
-    public async register(@HeaderParam('Authorization') token: string, @Body() body: RegisterUserRequest): Promise<GenericResponseDto<RegisterResponse>> {
+    public async register(@HeaderParam('Authorization') token: string, @Body() body: RegisterUserRequest): Promise<GenericResponseDto<any>> {
         await this.validator.validateBody(body);
-        const data = await this.customerService.registerUser(token, body);
-        return new GenericResponseDto(true, 'Customer Registered Successfully', data);
+        await this.customerService.registerUser(token, body);
+        return new GenericResponseDto(true, 'Customer Registered Successfully', '');
     }
 
     @Post('/get-user-data')
     @UseBefore(CustomerAuthorizationMiddleware)
-    public async geteUserData(@HeaderParam('Authorization') token: string, @Body() body: UserDataRequest): Promise<GenericResponseDto<UserDataResponse>> {
+    public async geteUserData(@HeaderParam('Authorization') token: string, @Body() body: UserDataRequest): Promise<GenericResponseDto<any>> {
         await this.validator.validateBody(body);
-        const data = await this.customerService.customerProfile(token, body.mobileNumber);
-        return new GenericResponseDto(true, 'Customer profile retrieved successfully', data);
+        let data = undefined;
+        try {
+            data = await this.customerService.customerProfile(token, body.mobileNumber);
+        } catch (err) {
+            console.log('>>>>>>>>>>>>>>>>HERE<<<<<<<<<<<<<<<<<<<<<');
+            data = await this.userServices.getUserByMobileNumber(body.mobileNumber);
+        }
+
+        console.log('>>>>>>>>>>>>>>>>', data);
+        if (!data) {
+            return new GenericResponseDto(false, 'Customer profile does not exist', '');
+        }
+
+        return new GenericResponseDto(true, 'Customer profile retrieved successfully', {
+            ocrNidData: {
+                firstNameAr: data?.customerProfile?.firstNameAr || '',
+                lastNameAr: data?.customerProfile?.lastNameAr || '',
+                firstNameEn: data?.customerProfile?.firstNameEn || data?.firstName || '',
+                lastNameEn: data?.customerProfile?.lastNameEn || data?.lastName || '',
+                nidNumber: data?.customerProfile?.natIDNumber || '',
+                nationality: 'Egyptian',
+                address: data?.customerProfile?.address || '',
+                gender: data?.customerProfile?.gender === 'ذكر' ? '1' : '0',
+                workOccupation: data?.customerProfile?.workOccupation || '',
+                workAddress: data?.customerProfile?.workAddress || '',
+                birthdate: data?.customerProfile?.birthdate || '',
+                placeOfBirth: data?.customerProfile?.placeOfBirth || '',
+                phoneNumber: data?.customerProfile?.mobileNumber || data?.phoneNumber || '',
+                status: data?.customerProfile?.status || 'INITIATED',
+            },
+            isTopup: data?.customerProfile?.isTopUp || '',
+            nidFrontUrl: data?.customerProfile?.nidFrontUrl || '',
+            nidBackUrl: data?.customerProfile?.nidBackUrl || '',
+            userToken: data?.customerProfile?.businessId || data?.referenceId || '',
+        });
     }
 
     @Post('/kyc-doc')
@@ -64,7 +97,8 @@ export class CustomerController {
     public async saveKycDoc(@HeaderParam('Authorization') token: string, @Body() body: SaveKycDocRequest): Promise<SaveKycResponse> {
         await this.validator.validateBody(body);
         const data = await this.customerService.saveKyc(token, body.businessId, body.kyc);
-        return new SaveKycResponse(data);
+        console.log(data);
+        return new GenericResponseDto(true, 'KYC form uploaded successfully', data?.result?.KYCFormDetails);
     }
 
     @Post('/update-user-data')
@@ -100,7 +134,7 @@ export class CustomerController {
             body.businessId,
             token
         );
-        return new GenericResponseDto(true, 'National ID uploaded successfully', data);
+        return new GenericResponseDto(true, 'National ID uploaded successfully', data?.result);
     }
 
     @Post('/reupload-nid')
@@ -118,13 +152,14 @@ export class CustomerController {
             body.nidBack,
             body.userToken
         );
-        return new GenericResponseDto(true, 'National ID re-uploaded successfully', data);
+        return new GenericResponseDto(true, 'National ID re-uploaded successfully', data?.result);
+
     }
 
     @Post('/get-business-id')
     public async geteUserBusinessId(@Body() body: UserBusinessIdRequest): Promise<GenericResponseDto<any>> {
         await this.validator.validateBody(body);
-        const businessId = await this.userServices.fetchBusinessId(body.mobileNumber);
-        return new GenericResponseDto(true, 'User business id fetched successfully', { businessId });
+        const userData = await this.userServices.getUserByMobileNumber(body.mobileNumber);
+        return new GenericResponseDto(true, 'User business id fetched successfully', { businessId: userData?.referenceId });
     }
 }

@@ -7,6 +7,7 @@ import { PdfService } from '../../../services/helpers/PdfService';
 import { EODReportRequest } from './requests/ReportRequests';
 import { CustomerAuthorizationMiddleware } from '../../../middlewares/CustomerAuthorizationMiddleware';
 import { EODReportResponse, EODReportPrintResponse } from './responses/ReportResponses';
+import { GenericResponseDto } from '../responses/SuccessMsgResponse';
 
 @JsonController('/api/reports')
 @OpenAPI({ security: [{ basicAuth: [] }] })
@@ -23,7 +24,7 @@ export class ReportController {
     public async EODReport(@HeaderParam('Authorization') token: string, @Body() body: EODReportRequest): Promise<EODReportResponse> {
         await this.validator.validateBody(body);
         const data = await this.reportService.EODReport(token, body);
-        return new EODReportResponse(data);
+        return new GenericResponseDto(true, 'User business id fetched successfully', data?.reportDetails);
     }
 
     @Get('/print-end-of-day')
@@ -32,7 +33,7 @@ export class ReportController {
         const reportData = await this.reportService.retrieveReport(token);
         const templatePath = path.join(__dirname, '..', '..', '..', 'templates', 'eodReport.hbs');
         const encodedPdf = await this.pdfService.encodedPdf(templatePath, reportData);
-        return new EODReportPrintResponse(encodedPdf);
+        return new GenericResponseDto(true, 'End of Day Report PDF generated successfully', encodedPdf);
     }
 
 }

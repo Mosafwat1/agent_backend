@@ -4,6 +4,7 @@ import { AgentService } from '../../../services/api/auth/AgentService';
 import { ValidateService } from '../../../services/validation/ValidateService';
 import { LoginAgent, VerifyOtp } from './requests/AuthRequests';
 import { LoginResponse, VerifyOtpResponse } from './responses/AuthResponses';
+import { GenericResponseDto } from '../responses/SuccessMsgResponse';
 
 @JsonController('/api/auth')
 @OpenAPI({ security: [{ basicAuth: [] }] })
@@ -19,7 +20,9 @@ export class AuthController {
     public async login(@Body() body: LoginAgent): Promise<LoginResponse> {
         await this.validator.validateBody(body);
         await this.agentService.requestOtp(body.mobileNumber, false);
-        return new LoginResponse();
+        return new GenericResponseDto(true, undefined, {
+            message: 'OTP has been sent successfully to your mobile number',
+        });
     }
 
     @Post('/otp/verify')
