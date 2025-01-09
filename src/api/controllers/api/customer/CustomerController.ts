@@ -46,11 +46,9 @@ export class CustomerController {
         try {
             data = await this.customerService.customerProfile(token, body.mobileNumber);
         } catch (err) {
-            console.log('>>>>>>>>>>>>>>>>HERE<<<<<<<<<<<<<<<<<<<<<');
             data = await this.userServices.getUserByMobileNumber(body.mobileNumber);
         }
 
-        console.log('>>>>>>>>>>>>>>>>', data);
         if (!data) {
             return new GenericResponseDto(false, 'Customer profile does not exist', '');
         }
@@ -97,7 +95,6 @@ export class CustomerController {
     public async saveKycDoc(@HeaderParam('Authorization') token: string, @Body() body: SaveKycDocRequest): Promise<SaveKycResponse> {
         await this.validator.validateBody(body);
         const data = await this.customerService.saveKyc(token, body.businessId, body.kyc);
-        console.log(data);
         return new GenericResponseDto(true, 'KYC form uploaded successfully', data?.result?.KYCFormDetails);
     }
 
