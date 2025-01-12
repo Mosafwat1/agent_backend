@@ -76,7 +76,7 @@ export class CustomerService {
         }
     }
 
-    public async kycDoc(token: string, reference: string, type: string = 'MOBILE'): Promise<any> {
+    public async kycDoc(token: string, reference: string, type: string = 'businessId'): Promise<any> {
         try {
              return this.provider.dispatch('customer-profile', {
                 payload: {

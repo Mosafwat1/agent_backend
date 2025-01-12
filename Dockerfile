@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18-slim
 
 # Install dependencies required for running Chromium in headless mode
 RUN apt-get update && apt-get install -y \
@@ -21,8 +21,10 @@ RUN apt-get update && apt-get install -y \
     libxrandr2 \
     xdg-utils \
     libgbm1 \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+    libcurl4 \
+    libssl3 \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create work directory
 WORKDIR /usr/src/app
@@ -32,12 +34,6 @@ COPY . /usr/src/app
 
 # Install app dependencies
 RUN yarn install
-
-# Build the application
-# RUN yarn build
-
-# Copy templates explicitly
-# RUN mv src/api/templates/ /usr/src/app/dist/api/
 
 # Expose the port the app runs on
 EXPOSE 3000
