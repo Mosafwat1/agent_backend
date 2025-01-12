@@ -17,8 +17,7 @@ export class ErrorHandlerMiddleware implements ExpressErrorMiddlewareInterface {
         res.status(error.statusCode || +error?.response?.status || 500);
         res.json({
             isSuccess: false,
-            message: error?.response?.data?.message || '',
-           // data: undefined,
+            message: error.message || error?.response?.data?.message || 'UnExpected Error',
             data: error[`errors`] || '',
         });
 

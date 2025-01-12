@@ -1,4 +1,4 @@
-import { JsonController, Body, Post, HeaderParam, UseBefore, Get } from 'routing-controllers';
+import { JsonController, Body, Post, HeaderParam, UseBefore, Get, HttpError } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 import * as path from 'path';
 import { ReportService } from '../../../services/api/ReportService';
@@ -30,10 +30,14 @@ export class ReportController {
     @Get('/print-end-of-day')
     @UseBefore(CustomerAuthorizationMiddleware)
     public async EODReportPrint(@HeaderParam('Authorization') token: string): Promise<EODReportPrintResponse> {
-        const reportData = await this.reportService.retrieveReport(token);
-        const templatePath = path.join(__dirname, '..', '..', '..', 'templates', 'eodReport.hbs');
-        const encodedPdf = await this.pdfService.encodedPdf(templatePath, reportData);
-        return new GenericResponseDto(true, 'End of Day Report PDF generated successfully', encodedPdf);
+        try {
+            const reportData = await this.reportService.retrieveReport(token);
+            const templatePath = path.join(__dirname, '..', '..', '..', 'templates', 'eodReport.hbs');
+            const encodedPdf = await this.pdfService.encodedPdf(templatePath, reportData);
+            return new GenericResponseDto(true, 'End of Day Report PDF generated successfully', encodedPdf);
+        } catch (error) {
+            throw new HttpError(400, 'Failed to fetch PDF');
+        }
     }
 
 }

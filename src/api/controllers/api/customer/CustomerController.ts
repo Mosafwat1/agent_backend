@@ -70,7 +70,7 @@ export class CustomerController {
                 phoneNumber: data?.customerProfile?.mobileNumber || data?.phoneNumber || '',
                 status: data?.customerProfile?.status || 'INITIATED',
             },
-            isTopup: data?.customerProfile?.isTopUp || '',
+            isTopup: data?.customerProfile?.isTopUp || false,
             nidFrontUrl: data?.customerProfile?.nidFrontUrl || '',
             nidBackUrl: data?.customerProfile?.nidBackUrl || '',
             userToken: data?.customerProfile?.businessId || data?.referenceId || '',
