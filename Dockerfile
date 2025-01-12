@@ -1,6 +1,6 @@
 FROM node:18
 
-# Install dependencies required for running Chromium in headless mode
+# Install dependencies required for Chromium
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
@@ -21,8 +21,21 @@ RUN apt-get update && apt-get install -y \
     libxrandr2 \
     xdg-utils \
     libgbm1 \
+    libu2f-udev \
+    libxshmfence1 \
+    libegl1 \
+    libwayland-client0 \
+    libwayland-cursor0 \
+    libwayland-egl1 \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
+
+# Set environment variable to prevent Puppeteer from downloading Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Install Chromium
+RUN apt-get update && apt-get install -y chromium && rm -rf /var/lib/apt/lists/*
 
 # Create work directory
 WORKDIR /usr/src/app
@@ -32,12 +45,6 @@ COPY . /usr/src/app
 
 # Install app dependencies
 RUN yarn install
-
-# Build the application
-# RUN yarn build
-
-# Copy templates explicitly
-# RUN mv src/api/templates/ /usr/src/app/dist/api/
 
 # Expose the port the app runs on
 EXPOSE 3000

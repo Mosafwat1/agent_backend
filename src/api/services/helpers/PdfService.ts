@@ -16,7 +16,7 @@ export class PdfService {
                   '--no-sandbox',
                   '--disable-setuid-sandbox',
                 ],
-              });
+            });
             const page = await browser.newPage();
             const html = await this.renderTemplate(filePath, data);
             await page.setContent(html, { waitUntil: 'domcontentloaded' });
