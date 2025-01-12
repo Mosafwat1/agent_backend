@@ -3,14 +3,10 @@ import { Service } from 'typedi';
 import puppeteer from 'puppeteer';
 import { compile } from 'handlebars';
 import { promises as fs } from 'fs';
-import { Logger, LoggerInterface } from '../../../decorators/Logger';
 import { HttpError } from 'routing-controllers';
 
 @Service()
 export class PdfService {
-    constructor(
-        @Logger(__filename) private log: LoggerInterface
-    ) {}
 
     public async encodedPdf(filePath: string, data: any): Promise<any> {
         try {
@@ -32,14 +28,19 @@ export class PdfService {
             await browser.close();
             return Buffer.from(pdfBuffer).toString('base64');
         } catch (error) {
-            this.log.error('Failed to encode PDF', { error});
+            console.log('>>> Failed to encode PDF >>>', error);
             throw new HttpError(400, 'Failed to encode PDF');
         }
     }
 
     private async renderTemplate(filePath: string, data: any): Promise <any> {
-        const templateSource = await fs.readFile(filePath, 'utf-8');
-        const template = compile(templateSource);
-        return template({data});
+        try {
+            const templateSource = await fs.readFile(filePath, 'utf-8');
+            const template = compile(templateSource);
+            return template({data});
+        } catch (error) {
+            console.log('>>> Failed to render template >>>', error);
+            throw error;
+        }
     }
 }
