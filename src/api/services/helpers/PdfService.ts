@@ -11,7 +11,7 @@ export class PdfService {
     public async encodedPdf(filePath: string, data: any): Promise<any> {
         try {
             const browser = await puppeteer.launch({
-                executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+                executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
                 headless: true,
                 args: ['--no-sandbox', '--disable-setuid-sandbox'],
             });
