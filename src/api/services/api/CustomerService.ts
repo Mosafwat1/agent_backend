@@ -149,29 +149,29 @@ export class CustomerService {
         }
     }
 
-    public async saveNatIdToMiniIO(
+    public async saveNatIdToMiniIO(payload: {
+        token: string,
         natFrontBase64: string,
         natBackBase64: string,
-        businessId: string,
-        token: string
-    ): Promise<any> {
+        businessId: string }): Promise<any> {
         try {
             return this.provider.dispatch('customer-upload', {
                 payload: {
                     request: {
-                        businessId,
+                        businessId: payload.businessId,
                         docs: {
-                            NatFront: natFrontBase64,
-                            NatBack: natBackBase64,
+                            NatFront: payload.natFrontBase64,
+                            NatBack: payload.natBackBase64,
                         },
                     },
                     signature: 'abc123signature',
                 },
                 headers: {
-                    Authorization: token,
+                    Authorization: payload.token,
                 },
             });
         } catch (error) {
+            console.log('[saveNatIdToMiniIO]>>>>>>>>>>>', error);
             this.log.error('Failed to upload national ID documents', { error });
             throw new HttpError(400, 'Failed to upload national ID documents');
         }

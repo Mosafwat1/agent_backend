@@ -125,12 +125,12 @@ export class CustomerController {
     ): Promise<GenericResponseDto<any>> {
     await this.validator.validateBody(body);
 
-        const data = await this.customerService.saveNatIdToMiniIO(
-            body.natFront,
-            body.natBack,
-            body.businessId,
-            token
-        );
+        const data = await this.customerService.saveNatIdToMiniIO({
+            natFrontBase64: body.natFront,
+            natBackBase64: body.natBack,
+            businessId: body.businessId,
+            token,
+        });
         return new GenericResponseDto(true, 'National ID uploaded successfully', data?.result);
     }
 
@@ -143,12 +143,12 @@ export class CustomerController {
         @Body() body: ReUploadNatIdRequest
     ): Promise<GenericResponseDto<any>> {
         await this.validator.validateBody(body);
-        const data = await this.customerService.saveNatIdToMiniIO(
+        const data = await this.customerService.saveNatIdToMiniIO({
             token,
-            body.nidFront,
-            body.nidBack,
-            body.userToken
-        );
+            natFrontBase64: body.nidFront,
+            natBackBase64: body.nidBack,
+            businessId: body.userToken,
+        });
         return new GenericResponseDto(true, 'National ID re-uploaded successfully', data?.result);
 
     }
