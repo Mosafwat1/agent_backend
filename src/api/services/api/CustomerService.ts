@@ -172,6 +172,7 @@ export class CustomerService {
             });
         } catch (error) {
             console.log('[saveNatIdToMiniIO]>>>>>>>>>>>', error);
+            throw error;
             // this.log.error('Failed to upload national ID documents', { error });
             // throw new HttpError(400, 'Failed to upload national ID documents');
         }
