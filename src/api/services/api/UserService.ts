@@ -23,4 +23,16 @@ export class UserService {
             throw new HttpError(400, 'Failed to fetch business id');
         }
     }
+
+    public getUserStatus(cardStatus: string): string {
+        if (cardStatus === 'received') {
+            return 'registered';
+        }
+
+        if (cardStatus === 'neutral') {
+            return 'applied_for_card';
+        }
+
+        return cardStatus;
+    }
 }

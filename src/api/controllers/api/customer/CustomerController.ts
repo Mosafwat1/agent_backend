@@ -68,7 +68,7 @@ export class CustomerController {
                 birthdate: data?.customerProfile?.birthdate || '',
                 placeOfBirth: data?.customerProfile?.placeOfBirth || '',
                 phoneNumber: data?.customerProfile?.mobileNumber || data?.phoneNumber || '',
-                status: data?.customerProfile?.status || 'INITIATED',
+                status: data?.customerProfile?.status || this.userServices.getUserStatus(data?.clyncCardStatus),
             },
             isTopup: data?.customerProfile?.isTopUp || false,
             nidFrontUrl: data?.customerProfile?.nidFrontUrl || '',
