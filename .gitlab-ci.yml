@@ -42,8 +42,8 @@ build-image-dev:
   extends: .template_docker_login
   before_script:
     #- amazon-linux-extras install docker  # Install Docker in amazon/aws-cli
-    - docker --version
-    - aws --version
+    #- docker --version
+    #- aws --version
   script:
     - unset DOCKER_HOST
     - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin $DOCKER_REGISTRY
