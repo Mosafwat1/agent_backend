@@ -108,8 +108,10 @@ export class CustomerController {
         await this.customerService.updateProfileData(
             token,
             body.userToken,
-            body.aName,
-            body.eName,
+            body.firstNameEn,
+            body.firstNameAr,
+            body.lastNameAr,
+            body.lastNameEn,
             body.workAddress,
             body.workOccupation,
             body.nidAddress

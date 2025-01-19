@@ -1,5 +1,5 @@
 import {
-    defaultMetadataStorage as classTransformerMetadataStorage
+    defaultMetadataStorage as classTransformerMetadataStorage,
 } from 'class-transformer/storage';
 import { getFromContainer, MetadataStorage } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
@@ -19,11 +19,13 @@ export const swaggerLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             MetadataStorage
         ) as any;
 
+        // Generate schemas with a type assertion to avoid type errors
         const schemas = validationMetadatasToSchemas(validationMetadatas, {
             classTransformerMetadataStorage,
             refPointerPrefix: '#/components/schemas/',
-        });
+        }) as { [key: string]: Record<string, unknown> };
 
+        // Generate the Swagger file
         const swaggerFile = routingControllersToSpec(
             getMetadataArgsStorage(),
             {},
@@ -40,30 +42,33 @@ export const swaggerLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             }
         );
 
-        // Add npm infos to the swagger doc
+        // Add application metadata to the Swagger file
         swaggerFile.info = {
             title: env.app.name,
             description: env.app.description,
             version: env.app.version,
         };
 
+        // Add server details
         swaggerFile.servers = [
             {
                 url: `${env.app.schema}://${env.app.host}:${env.app.port}`,
             },
         ];
 
+        // Set up Swagger UI with optional basic auth
         expressApp.use(
             env.swagger.route,
-            env.swagger.username ? basicAuth({
-                users: {
-                    [`${env.swagger.username}`]: env.swagger.password,
-                },
-                challenge: true,
-            }) : (req, res, next) => next(),
+            env.swagger.username
+                ? basicAuth({
+                      users: {
+                          [`${env.swagger.username}`]: env.swagger.password,
+                      },
+                      challenge: true,
+                  })
+                : (req, res, next) => next(),
             swaggerUi.serve,
             swaggerUi.setup(swaggerFile)
         );
-
     }
 };
