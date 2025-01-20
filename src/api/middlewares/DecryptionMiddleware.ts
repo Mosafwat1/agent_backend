@@ -22,6 +22,7 @@ export class DecryptionMiddleware implements ExpressMiddlewareInterface {
                 Buffer.from(data, 'base64')
             );
             req.body = JSON.parse(decryptedBuffer.toString('utf8'));
+            req.body.data = data;
             return next();
         } catch (err) {
             console.log(err);
