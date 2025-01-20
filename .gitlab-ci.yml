@@ -59,7 +59,7 @@ build-image-dev:
   environment: development  
   #when: manual
   rules:
-    - if:  '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "dev" '
+    - if:  '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "dev-flagship" '
       exists:
         - Dockerfile
 
@@ -89,6 +89,6 @@ deploy-dev:
 
   environment: development
   rules:
-    - if:  '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "dev" '
+    - if:  '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "dev-flagship" '
       exists:
         - Dockerfile
