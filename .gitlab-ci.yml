@@ -5,14 +5,13 @@ services:
     alias: docker
     command: ["--tls=false"]
 
-
 stages:
   - build
   - deploy
 
 variables:
   DOCKER_REGISTRY: 724772066880.dkr.ecr.eu-west-1.amazonaws.com
-  APP_NAME: "demo-agent-app"
+  APP_NAME: "dev-agentapp"
   DOCKER_HOST: "tcp://docker:2375"
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
@@ -32,18 +31,20 @@ build-image-dev:
   stage: build
   variables:
     DOCKER_REGISTRY: 724772066880.dkr.ecr.eu-west-1.amazonaws.com
-    APP_NAME: demo-agent-app
+    APP_NAME: dev-agentapp
+  extends: .template_docker_login  
   image: 
     name: amazon/aws-cli
     entrypoint: [""]
   services:
     - name: docker:dind 
       command: ["--tls=false"] 
-  extends: .template_docker_login
+  
   before_script:
     #- amazon-linux-extras install docker  # Install Docker in amazon/aws-cli
-    #- docker --version
-    #- aws --version
+    - aws --version
+    - docker --version
+    
   script:
     - unset DOCKER_HOST
     - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin $DOCKER_REGISTRY
@@ -74,6 +75,7 @@ deploy-dev:
    # Install SSH and configure SSH Agent
     - apt-get update && apt-get install -y openssh-client
     - echo "test ubuntu pipline "
+    - echo "login in ecr"
   script:
     #- echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - # ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST
     - chmod 400 "gitlab-server.pem"
@@ -86,7 +88,6 @@ deploy-dev:
     - ssh -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-34-242-133-82.eu-west-1.compute.amazonaws.com "docker run -d --name ${APP_NAME}_container -p 8090:3000 $DOCKER_REGISTRY/$APP_NAME:${CI_PIPELINE_IID}"
     # Cleanup old containers/images
     - ssh -o "StrictHostKeyChecking no" -i "gitlab-server.pem" ubuntu@ec2-34-242-133-82.eu-west-1.compute.amazonaws.com "docker image prune -a -f"
-
   environment: development
   rules:
     - if:  '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "dev-flagship" '
