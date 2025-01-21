@@ -26,7 +26,6 @@ export class PdfService {
             await browser.close();
             return Buffer.from(pdfBuffer).toString('base64');
         } catch (error) {
-            console.log('>>> Failed to encode PDF >>>', error);
             throw new HttpError(400, 'Failed to encode PDF');
         }
     }
@@ -37,7 +36,6 @@ export class PdfService {
             const template = compile(templateSource);
             return template({data});
         } catch (error) {
-            console.log('>>> Failed to render template >>>', error);
             throw error;
         }
     }
