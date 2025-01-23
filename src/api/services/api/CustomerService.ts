@@ -115,7 +115,7 @@ export class CustomerService {
             throw new HttpError(400, 'Failed to fetch kyc doc');
         }
     }
-    public async updateProfileData(
+    public async updateProfileData( data: {
         token: string,
         userToken: string,
         firstNameAr: string,
@@ -125,24 +125,24 @@ export class CustomerService {
         workAddress?: string,
         workOccupation?: string,
         nidAddress?: string
-    ): Promise<any> {
+    }): Promise<any> {
         try {
             return this.provider.dispatch('update-user-profile', {
                 payload: {
                     request: {
-                        businessId: userToken,
-                        firstNameAr,
-                        firstNameEn,
-                        lastNameAr,
-                        lastNameEn,
-                        workAddress: workAddress || '',
-                        workOccupation: workOccupation || '',
-                        natIDAddress: nidAddress || '',
+                        businessId: data.userToken,
+                        firstNameAr: data.firstNameAr,
+                        firstNameEn: data.firstNameEn,
+                        lastNameAr: data.lastNameAr,
+                        lastNameEn: data.lastNameEn,
+                        workAddress: data.workAddress || '',
+                        workOccupation: data.workOccupation || '',
+                        natIDAddress: data.nidAddress || '',
                     },
                     signature: env.providers.utp.signature,
                 },
                 headers: {
-                    Authorization: token,
+                    Authorization: data.token,
                 },
             });
         } catch (error) {

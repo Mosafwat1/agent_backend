@@ -105,17 +105,17 @@ export class CustomerController {
         @Body() body: UpdateUserDataRequest
     ): Promise<UpdateUserDataResponse> {
         await this.validator.validateBody(body);
-        await this.customerService.updateProfileData(
+        await this.customerService.updateProfileData({
             token,
-            body.userToken,
-            body.firstNameEn,
-            body.firstNameAr,
-            body.lastNameAr,
-            body.lastNameEn,
-            body.workAddress,
-            body.workOccupation,
-            body.nidAddress
-        );
+            userToken: body.userToken,
+            firstNameEn: body.firstNameEn,
+            firstNameAr: body.firstNameAr,
+            lastNameAr: body.lastNameAr,
+            lastNameEn: body.lastNameEn,
+            workAddress: body.workAddress,
+            workOccupation: body.workOccupation,
+            nidAddress: body.nidAddress
+        });
         return new UpdateUserDataResponse();
     }
 
