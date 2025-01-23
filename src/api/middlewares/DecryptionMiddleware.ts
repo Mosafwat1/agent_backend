@@ -2,9 +2,9 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 import * as path from 'path';
-import { ExpressMiddlewareInterface, Middleware } from 'routing-controllers';
+import { ExpressMiddlewareInterface } from 'routing-controllers';
 
-@Middleware({ type: 'before' })
+// @Middleware({ type: 'before' })
 export class DecryptionMiddleware implements ExpressMiddlewareInterface {
 
     public use(req: express.Request, res: express.Response, next: express.NextFunction): any {

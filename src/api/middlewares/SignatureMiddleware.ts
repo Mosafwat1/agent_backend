@@ -1,8 +1,8 @@
 import * as express from 'express';
 import * as crypto from 'crypto';
-import { ExpressMiddlewareInterface, Middleware } from 'routing-controllers';
+import { ExpressMiddlewareInterface } from 'routing-controllers';
 
-@Middleware({ type: 'before' })
+// @Middleware({ type: 'before' })
 export class SignatureMiddleware implements ExpressMiddlewareInterface {
 
     public use(req: express.Request, res: express.Response, next: express.NextFunction): any {
