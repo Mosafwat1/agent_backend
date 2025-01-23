@@ -25,7 +25,7 @@ export class DecryptionMiddleware implements ExpressMiddlewareInterface {
             req.body.data = data;
             return next();
         } catch (err) {
-            console.log(err);
+            console.log('>>>>>>>', err);
             return res.status(400).json({
                 isSuccess: false,
                 message: 'Bad Request',
