@@ -26,7 +26,7 @@ export class ReportService {
             // Generate today's date dynamically
             const today = new Date();
             const formattedDate = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-    
+
             return this.provider.dispatch('eod-report', {
                 payload: {
                     request: {
@@ -49,7 +49,6 @@ export class ReportService {
             throw new HttpError(400, 'Failed to fetch EOD reports');
         }
     }
-    
 
     public async retrieveReport(token: string): Promise<any> {
         try {

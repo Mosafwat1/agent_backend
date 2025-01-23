@@ -13,7 +13,7 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
 export const homeLoader: MicroframeworkLoader = (settings: MicroframeworkSettings | undefined) => {
     if (settings) {
         const app = settings.getData('express_app'); // Retrieve the express instance
-        
+
         // Existing route
         app.get(env.app.routes.prefix, (req: express.Request, res: express.Response) => {
             return res.json({
