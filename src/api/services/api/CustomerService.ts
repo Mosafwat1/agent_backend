@@ -115,12 +115,13 @@ export class CustomerService {
             throw new HttpError(400, 'Failed to fetch kyc doc');
         }
     }
-
     public async updateProfileData(
         token: string,
         userToken: string,
-        aName: string,
-        eName: string,
+        firstNameAr: string,
+        firstNameEn: string,
+        lastNameAr: string,
+        lastNameEn: string,
         workAddress?: string,
         workOccupation?: string,
         nidAddress?: string
@@ -130,9 +131,10 @@ export class CustomerService {
                 payload: {
                     request: {
                         businessId: userToken,
-                        fullName: aName,
-                        firstName: '',
-                        englishFullName: eName,
+                        firstNameAr,
+                        firstNameEn,
+                        lastNameAr,
+                        lastNameEn,
                         workAddress: workAddress || '',
                         workOccupation: workOccupation || '',
                         natIDAddress: nidAddress || '',
@@ -171,10 +173,8 @@ export class CustomerService {
                 },
             });
         } catch (error) {
-            console.log('[saveNatIdToMiniIO]>>>>>>>>>>>', error);
-            throw error;
-            // this.log.error('Failed to upload national ID documents', { error });
-            // throw new HttpError(400, 'Failed to upload national ID documents');
+            this.log.error('Failed to upload national ID documents', { error });
+            throw new HttpError(400, 'Failed to upload national ID documents');
         }
     }
 

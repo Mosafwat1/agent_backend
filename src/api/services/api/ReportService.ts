@@ -23,12 +23,15 @@ export class ReportService {
 
     public async EODReport(token: string, params: EODReportRequest): Promise<any> {
         try {
-            // from, to, sortBy, and sortDirection should be fetched from client
-             return this.provider.dispatch('eod-report', {
+            // Generate today's date dynamically
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    
+            return this.provider.dispatch('eod-report', {
                 payload: {
-                    request : {
-                        from: params?.from || '2023-10-02T10:15:30',
-                        to: params?.to || '2024-12-20T10:15:30',
+                    request: {
+                        from: params?.from || `${formattedDate}T00:00:00`,
+                        to: params?.to || `${formattedDate}T23:00:00`,
                         isPageable: params?.isPageable,
                         size: params?.size,
                         page: params?.page,
@@ -40,12 +43,13 @@ export class ReportService {
                 headers: {
                     Authorization: token,
                 },
-             });
+            });
         } catch (error) {
-            this.log.error('Failed to fetch EOD reports', { error});
+            this.log.error('Failed to fetch EOD reports', { error });
             throw new HttpError(400, 'Failed to fetch EOD reports');
         }
     }
+    
 
     public async retrieveReport(token: string): Promise<any> {
         try {
