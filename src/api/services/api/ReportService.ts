@@ -16,25 +16,27 @@ export class ReportService {
         @Logger(__filename) private log: LoggerInterface
     ) {
         if (_.isNil(providerFactory)) {
-            throw new Error('no providers are available');
+            throw new Error('No providers are available');
         }
         this.provider = providerFactory.getInstance('utp');
     }
 
+    /**
+     * Fetches the EOD report for the given parameters.
+     */
     public async EODReport(token: string, params: EODReportRequest): Promise<any> {
         try {
-            // Generate today's date dynamically
             const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+            const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD format
 
-            return this.provider.dispatch('eod-report', {
+            return await this.provider.dispatch('eod-report', {
                 payload: {
                     request: {
                         from: params?.from || `${formattedDate}T00:00:00`,
-                        to: params?.to || `${formattedDate}T23:00:00`,
-                        isPageable: params?.isPageable,
-                        size: params?.size,
-                        page: params?.page,
+                        to: params?.to || `${formattedDate}T23:59:59`,
+                        isPageable: params?.isPageable || false,
+                        size: params?.size || 50,
+                        page: params?.page || 1,
                         sort_by: params?.sortBy || 'arabicName',
                         sort_direction: params?.sortDirection || 'ASC',
                     },
@@ -50,19 +52,25 @@ export class ReportService {
         }
     }
 
+    /**
+     * Retrieves the EOD report across all pages.
+     */
     public async retrieveReport(token: string): Promise<any> {
         try {
-            const reportData = [];
+            const reportData: any[] = [];
             let page = 1;
             const size = 50;
             let totalPages = 1;
-            // body should be fetched from client
+
             while (page <= totalPages) {
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+
                 const report = await this.provider.dispatch('eod-report', {
                     payload: {
-                        request : {
-                            from: '2023-10-10T10:15:30',
-                            to: '2024-12-20T10:15:30',
+                        request: {
+                            from: `${formattedDate}T00:00:00`,
+                            to: `${formattedDate}T23:59:59`,
                             isPageable: true,
                             size,
                             page,
@@ -77,22 +85,24 @@ export class ReportService {
                 });
 
                 const content = report?.reportDetails?.content;
-                content?.forEach(item => {
-                    if (item.created) {
-                        item.created = new Date(item.created).toLocaleString();
-                    }
-                    if (item.mobileNumber) {
-                        reportData.push(item);
-                    }
-                });
+                if (content) {
+                    content.forEach((item: any) => {
+                        if (item.created) {
+                            item.created = new Date(item.created).toLocaleString();
+                        }
+                        if (item.mobileNumber) {
+                            reportData.push(item);
+                        }
+                    });
+                }
 
-                totalPages = report?.reportDetails?.totalPages;
+                totalPages = report?.reportDetails?.totalPages || 1;
                 page++;
             }
 
             return reportData;
         } catch (error) {
-            this.log.error('Failed to retrieve EOD reports', { error});
+            this.log.error('Failed to retrieve EOD reports', { error });
             throw new HttpError(400, 'Failed to retrieve EOD reports');
         }
     }
