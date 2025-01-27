@@ -114,7 +114,7 @@ export class CustomerController {
             lastNameEn: body.lastNameEn,
             workAddress: body.workAddress,
             workOccupation: body.workOccupation,
-            nidAddress: body.nidAddress
+            nidAddress: body.nidAddress,
         });
         return new UpdateUserDataResponse();
     }
